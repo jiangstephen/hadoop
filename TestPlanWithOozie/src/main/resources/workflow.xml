@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	you under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<workflow-app xmlns="uri:oozie:workflow:0.2" name="testplan-workflow">
+	<start to="generate-data" />
+	<action name="generate-data">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<main-class>ms.mcs.model.testplan.ingester.FileProducer</main-class>
+			<arg>${sourceDirectory}</arg>
+			<arg>${fileCount}</arg>
+		</java>
+		<ok to="ingest-data" />
+		<error to="fail" />
+	</action>
+	<action name="ingest-data">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<main-class>ms.mcs.model.testplan.ingester.FileIngester</main-class>
+			<arg>${hadoopCoreSiteXml}</arg>
+			<arg>${hadoopHdfsSiteXml}</arg>
+			<arg>${hadoopDir}</arg>
+			<arg>${sourceDirectory}</arg>
+			<arg>${dateFileDir}</arg>
+		</java>
+		<ok to="mr-node" />
+		<error to="fail" />
+	</action>
+	<action name="mr-node">
+		<map-reduce>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<prepare>
+				<delete path="${hadoopOutputDir}" />
+			</prepare>
+			<configuration>
+				<property>
+					<name>mapred.mapper.new-api</name>
+					<value>true</value>
+				</property>
+				<property>
+					<name>mapred.reducer.new-api</name>
+					<value>true</value>
+				</property>
+				<property>
+					<name>mapreduce.map.class</name>
+					<value>ms.mcs.model.testplan.mapreduce.TestPlanXmlMapper</value>
+				</property>
+				<property>
+					<name>mapreduce.reduc.class</name>
+					<value>ms.mcs.model.testplan.mapreduce.TestPlanXmlReducer</value>
+				</property>
+				<property>
+					<name>mapred.output.key.class</name>
+					<value>ms.mcs.model.testplan.mapreduce.writable.TestSuiteKey</value>
+				</property>
+				<property>
+					<name>mapred.output.value.class</name>
+					<value>ms.mcs.model.testplan.mapreduce.writable.TestCaseValue </value>
+				</property>
+				<property>
+					<name>mapred.map.tasks</name>
+					<value>1</value>
+				</property>
+				<property>
+					<name>mapred.input.dir</name>
+					<value>${hadoopInputDir}</value>
+				</property>
+				<property>
+					<name>mapred.output.dir</name>
+					<value>${hadoopOutputDir}</value>
+				</property>
+			</configuration>
+		</map-reduce>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+	<kill name="fail">
+		<message>Map/Reduce failed, error
+			message[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/testplan"
+	xmlns:tns="http://www.example.org/testplan" elementFormDefault="qualified"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	jaxb:extensionBindingPrefixes="xjc">
+	<annotation>
+		<appinfo>
+			<jaxb:globalBindings>
+				<xjc:simple />
+			</jaxb:globalBindings>
+		</appinfo>
+	</annotation>
+
+	<complexType name="TestSuite">
+		<sequence>
+			<element name="testCase" type="tns:TestCaseType" maxOccurs="unbounded"
+				minOccurs="1"></element>
+
+		</sequence>
+		<attribute name="name" use="required" type="string"></attribute>
+	</complexType>
+
+	<complexType name="TestCaseType">
+		<sequence>
+			<element name="testType" type="string"></element>
+			<element name="desc" type="tns:TestTypeDesc" maxOccurs="11"
+				minOccurs="1"></element>
+			<element name="passed" type="boolean"></element>
+		</sequence>
+	</complexType>
+
+	<simpleType name="TestTypeDesc">
+		<restriction base="string">
+			<enumeration value="desc1"></enumeration>
+			<enumeration value="desc2"></enumeration>
+			<enumeration value="desc3"></enumeration>
+		</restriction>
+	</simpleType>
+
+
+	<complexType name="Execution">
+		<sequence>
+			<element name="pricingLibs" type="string"></element>
+		</sequence>
+		<attribute name="executionTime" type="dateTime"></attribute>
+	</complexType>
+
+	<complexType name="TestSuites">
+		<sequence>
+			<element name="exec" type="tns:Execution"></element>
+			<element name="testSuite" type="tns:TestSuite" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<element name="testSuites" type="tns:TestSuites"></element>
+	
+	<element name="testSuite" type="tns:TestSuite"></element>
+
+	<element name="testCase" type="tns:TestCaseType"></element>
+
+</schema>

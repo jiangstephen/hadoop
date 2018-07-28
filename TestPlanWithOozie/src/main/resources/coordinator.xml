@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coordinator-app name="testplan-schedule" frequency="* * * * *"
+	start="2018-01-01T08:00Z" end="2019-01-01T08:00Z" timezone="America/New_York"
+	xmlns="uri:oozie:coordinator:0.1">
+	<action>
+		<workflow>
+			<app-path>${wf_app_path}</app-path>
+		</workflow>
+	</action>
+</coordinator-app>

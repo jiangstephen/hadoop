@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:testSuites xmlns:tns="http://www.example.org/testplan" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/testplan ../../main/resources/testplan.xsd ">
+  <tns:exec executionTime="2018-01-01T12:00:00">
+    <tns:pricingLibs>pricingLibs</tns:pricingLibs>
+  </tns:exec>
+  <tns:testSuite name="model1">
+    <tns:testCase>
+      <tns:testType>testType1</tns:testType>
+      <tns:desc>desc1</tns:desc>
+      <tns:passed>true</tns:passed>
+    </tns:testCase>
+  </tns:testSuite>
+
+  <tns:testSuite name="model2">
+    <tns:testCase>
+      <tns:testType>testType1</tns:testType>
+      <tns:desc>desc1</tns:desc>
+      <tns:passed>true</tns:passed>
+    </tns:testCase>
+  </tns:testSuite>
+</tns:testSuites>
